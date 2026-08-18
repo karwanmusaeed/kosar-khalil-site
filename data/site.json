@@ -1,0 +1,85 @@
+{
+  "collections": [
+    {
+      "id": "citadel",
+      "name1": "The Citadel",
+      "name2": "Series",
+      "label": "Citadel Series",
+      "desc": "Five photographs of Erbil’s ancient citadel — mist, dusk and stone, captured across the highlands of Kurdistan.",
+      "spec1": "5 photos · High resolution",
+      "spec2": "Erbil, Kurdistan · 2026"
+    },
+    {
+      "id": "sandstorm",
+      "name1": "Sandstorm",
+      "name2": "",
+      "label": "Sandstorm",
+      "desc": "Amber dust over ancient walls — minarets, riders and citadels swallowed by the storm.",
+      "spec1": "4 photos · High resolution",
+      "spec2": "Kurdistan · 2026"
+    },
+    {
+      "id": "babylon",
+      "name1": "Babylon",
+      "name2": "",
+      "label": "Babylon",
+      "desc": "The blue gates of Mesopotamia — glazed brick, lions and processions of Ishtar.",
+      "spec1": "4 photos · High resolution",
+      "spec2": "Mesopotamia · 2026"
+    },
+    {
+      "id": "nocturne",
+      "name1": "Nocturne",
+      "name2": "",
+      "label": "Nocturne",
+      "desc": "Moons, lanterns and stone — the old courtyards after dark.",
+      "spec1": "4 photos · High resolution",
+      "spec2": "Kurdistan · 2026"
+    },
+    {
+      "id": "mist",
+      "name1": "Blue Mist",
+      "name2": "",
+      "label": "Blue Mist",
+      "desc": "Dusk, fog and quiet water — the cold hours before night.",
+      "spec1": "4 photos · High resolution",
+      "spec2": "Kurdistan · 2026"
+    },
+    {
+      "id": "legends",
+      "name1": "Legends",
+      "name2": "",
+      "label": "Legends",
+      "desc": "Lone figures out of time — riders and watchers before the walls.",
+      "spec1": "4 photos · High resolution",
+      "spec2": "Kurdistan · 2026"
+    }
+  ],
+  "photos": [
+    { "image": "/images/uploads/citadel-above-the-clouds.jpg", "title": "Above the Clouds", "price": 150, "collection": "citadel" },
+    { "image": "/images/uploads/citadel-reverie.jpg", "title": "Reverie", "price": 85, "collection": "citadel" },
+    { "image": "/images/uploads/citadel-through-the-arch.jpg", "title": "Through the Arch", "price": 95, "collection": "citadel" },
+    { "image": "/images/uploads/citadel-the-rider.jpg", "title": "The Rider", "price": 120, "collection": "citadel" },
+    { "image": "/images/uploads/citadel-the-window.jpg", "title": "The Window", "price": 80, "collection": "citadel" },
+    { "image": "/images/uploads/sandstorm-through-the-storm.jpg", "title": "Through the Storm", "price": 150, "collection": "sandstorm" },
+    { "image": "/images/uploads/sandstorm-edge-of-dust.jpg", "title": "The Edge of Dust", "price": 120, "collection": "sandstorm" },
+    { "image": "/images/uploads/sandstorm-minarets-in-amber.jpg", "title": "Minarets in Amber", "price": 95, "collection": "sandstorm" },
+    { "image": "/images/uploads/sandstorm-the-rider-waits.jpg", "title": "The Rider Waits", "price": 110, "collection": "sandstorm" },
+    { "image": "/images/uploads/babylon-gate-of-kings.jpg", "title": "Gate of Kings", "price": 130, "collection": "babylon" },
+    { "image": "/images/uploads/babylon-ishtar.jpg", "title": "Ishtar", "price": 110, "collection": "babylon" },
+    { "image": "/images/uploads/babylon-lions-of-babylon.jpg", "title": "Lions of Babylon", "price": 95, "collection": "babylon" },
+    { "image": "/images/uploads/babylon-the-procession.jpg", "title": "The Procession", "price": 95, "collection": "babylon" },
+    { "image": "/images/uploads/nocturne-full-moon.jpg", "title": "Full Moon", "price": 95, "collection": "nocturne" },
+    { "image": "/images/uploads/nocturne-blood-moon.jpg", "title": "Blood Moon", "price": 85, "collection": "nocturne" },
+    { "image": "/images/uploads/nocturne-lantern-hall.jpg", "title": "Lantern Hall", "price": 95, "collection": "nocturne" },
+    { "image": "/images/uploads/nocturne-hanging-gardens.jpg", "title": "Hanging Gardens", "price": 120, "collection": "nocturne" },
+    { "image": "/images/uploads/mist-still-water.jpg", "title": "Still Water", "price": 130, "collection": "mist" },
+    { "image": "/images/uploads/mist-blue-dusk.jpg", "title": "Blue Dusk", "price": 110, "collection": "mist" },
+    { "image": "/images/uploads/mist-daughter-of-the-mountains.jpg", "title": "Daughter of the Mountains", "price": 95, "collection": "mist" },
+    { "image": "/images/uploads/mist-the-veil.jpg", "title": "The Veil", "price": 120, "collection": "mist" },
+    { "image": "/images/uploads/legends-storm-watcher.jpg", "title": "Storm Watcher", "price": 150, "collection": "legends" },
+    { "image": "/images/uploads/legends-the-long-road.jpg", "title": "The Long Road", "price": 150, "collection": "legends" },
+    { "image": "/images/uploads/legends-golden-valley.jpg", "title": "Golden Valley", "price": 95, "collection": "legends" },
+    { "image": "/images/uploads/legends-crimson-sun.jpg", "title": "Crimson Sun", "price": 110, "collection": "legends" }
+  ]
+}

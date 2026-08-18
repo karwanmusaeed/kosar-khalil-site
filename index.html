@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOSAR KHALIL — Fine Art Photography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#fdfdfb;
+    --black:#0b0b0b;
+    --grey:#6f6f6a;
+    --hair:rgba(11,11,11,.9);
+    --ease:cubic-bezier(.19,1,.22,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--white);
+    color:var(--black);
+    font-family:'Archivo',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--black);color:var(--white);}
+  img{display:block;}
+  a{color:inherit;}
+  button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ============ CURSOR — black circle ============ */
+  .cursor{
+    position:fixed;top:0;left:0;z-index:200;
+    width:64px;height:64px;border-radius:50%;
+    background:var(--black);color:var(--white);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.2em;
+    pointer-events:none;
+    transform:translate(-50%,-50%) scale(0);
+    transition:transform .45s var(--ease);
+    will-change:transform;
+  }
+  .cursor.on{transform:translate(-50%,-50%) scale(1);}
+  @media (hover:none){.cursor{display:none;}}
+
+  /* ============ HEADER ============ */
+  header{
+    position:sticky;top:0;z-index:100;
+    background:var(--white);
+    border-bottom:1px solid var(--hair);
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:0 clamp(16px,3vw,40px);height:62px;
+  }
+  .logo{
+    font-weight:900;font-stretch:125%;font-size:1.1rem;letter-spacing:.06em;
+    text-decoration:none;text-transform:uppercase;white-space:nowrap;
+  }
+  .logo sup{font-size:.5em;font-weight:500;}
+  nav{display:flex;gap:2.4rem;justify-content:center;}
+  nav a{
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.18em;
+    text-transform:uppercase;text-decoration:none;position:relative;padding:4px 0;
+  }
+  nav a::after{
+    content:'';position:absolute;left:0;bottom:0;height:1px;width:100%;
+    background:var(--black);transform:scaleX(0);transform-origin:right;
+    transition:transform .4s var(--ease);
+  }
+  nav a:hover::after{transform:scaleX(1);transform-origin:left;}
+  .cart{
+    justify-self:end;font-family:'IBM Plex Mono',monospace;font-size:.72rem;
+    letter-spacing:.18em;text-transform:uppercase;
+    border:1px solid var(--black);padding:.55em 1.1em;border-radius:999px;
+    transition:background .35s var(--ease),color .35s var(--ease);
+  }
+  .cart:hover{background:var(--black);color:var(--white);}
+  .cart.pulse{animation:pulse .5s var(--ease);}
+  @keyframes pulse{0%{transform:scale(1);}40%{transform:scale(1.12);}100%{transform:scale(1);}}
+
+  /* ============ COLLECTIONS BAR ============ */
+  .collbar{
+    display:flex;align-items:center;gap:clamp(1.5rem,3vw,2.8rem);
+    padding:.85rem clamp(16px,3vw,40px);
+    border-bottom:1px solid var(--hair);
+    overflow-x:auto;scrollbar-width:none;
+    min-height:84px;
+  }
+  .collbar::-webkit-scrollbar{display:none;}
+  .citem{
+    display:flex;align-items:center;gap:.85rem;flex:none;
+    opacity:.5;transition:opacity .35s var(--ease);
+  }
+  .citem:hover,.citem.on{opacity:1;}
+  .thumb{
+    position:relative;width:52px;height:66px;overflow:hidden;flex:none;
+    background:#111;
+  }
+  .thumb img{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    opacity:0;transform:scale(1.001);
+    transition:opacity .55s var(--ease), transform 5s linear;
+  }
+  .thumb img.show{opacity:1;}
+  .citem:hover .thumb img.show{transform:scale(1.16);}
+  .clbl{
+    font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.2em;
+    text-transform:uppercase;white-space:nowrap;
+    border-bottom:1px solid transparent;padding-bottom:3px;
+    transition:border-color .3s;
+  }
+  .clbl em{font-style:normal;color:var(--grey);margin-left:.55em;font-size:.9em;}
+  .citem.on .clbl{border-bottom-color:var(--black);}
+
+  /* ============ MASTHEAD ============ */
+  .masthead{
+    padding:clamp(2.6rem,6vw,5rem) clamp(16px,3vw,40px) clamp(2rem,4vw,3.2rem);
+    border-bottom:1px solid var(--hair);
+  }
+  .masthead .eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--grey);display:block;margin-bottom:1.2rem;
+  }
+  .masthead h1{
+    font-weight:900;font-stretch:125%;text-transform:uppercase;
+    font-size:clamp(2.4rem,8.4vw,7.4rem);
+    line-height:.95;letter-spacing:-.015em;
+  }
+  .masthead h1 .line{display:block;overflow:hidden;}
+  .masthead h1 .line span{display:inline-block;transform:translateY(110%);animation:up .9s var(--ease) forwards;}
+  .masthead h1 .line:nth-child(2) span{animation-delay:.1s;}
+  @keyframes up{to{transform:translateY(0);}}
+  .masthead-meta{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    margin-top:2rem;gap:1.5rem;flex-wrap:wrap;
+  }
+  .masthead-meta p{font-size:.95rem;font-weight:400;color:var(--grey);max-width:46ch;line-height:1.7;}
+  .masthead-meta .spec{
+    font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.2em;
+    text-transform:uppercase;text-align:right;line-height:2;
+  }
+
+  /* ============ GRID ============ */
+  .grid{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:1px;background:var(--hair);
+    border-bottom:1px solid var(--hair);
+  }
+  .grid.cols5{grid-template-columns:repeat(5,1fr);}
+  .ghead{
+    grid-column:1/-1;background:var(--white);
+    display:flex;align-items:center;gap:.8rem;width:100%;text-align:left;
+    font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.26em;
+    text-transform:uppercase;color:var(--grey);
+    padding:1rem clamp(16px,3vw,40px);
+    opacity:0;transform:translateY(20px);
+    transition:opacity .9s var(--ease),transform .9s var(--ease),color .3s;
+  }
+  .ghead .garrow{transition:transform .35s var(--ease);}
+  .ghead:hover{color:var(--black);}
+  .ghead:hover .garrow{transform:translateX(6px);}
+  .card{
+    background:var(--white);position:relative;display:flex;flex-direction:column;
+    opacity:0;transform:translateY(30px);
+    transition:opacity .9s var(--ease),transform .9s var(--ease);
+  }
+  .card.in,.ghead.in{opacity:1;transform:translateY(0);}
+  .card .frame{position:relative;overflow:hidden;aspect-ratio:3/4;background:#141414;cursor:pointer;}
+  .card .frame img{
+    width:100%;height:100%;object-fit:cover;
+    transform:scale(1.001);
+    transition:transform 1.4s var(--ease);
+  }
+  .card:hover .frame img{transform:scale(1.06);}
+  .addbar{
+    position:absolute;left:0;right:0;bottom:0;
+    background:var(--black);color:var(--white);
+    font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.22em;
+    text-transform:uppercase;text-align:center;
+    padding:1rem 0;width:100%;
+    transform:translateY(101%);
+    transition:transform .5s var(--ease),background .3s;
+  }
+  .card:hover .addbar{transform:translateY(0);}
+  .addbar:hover{background:#222;}
+  .caption{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    gap:1rem;padding:1.1rem 1.2rem 1.25rem;
+  }
+  .caption .idx{
+    font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.2em;
+    color:var(--grey);display:block;margin-bottom:.35rem;
+  }
+  .caption h3{font-size:1.02rem;font-weight:600;letter-spacing:.01em;text-transform:uppercase;}
+  .caption .ed{
+    font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--grey);margin-top:.4rem;
+  }
+  .caption .price{font-family:'IBM Plex Mono',monospace;font-size:.85rem;font-weight:500;white-space:nowrap;}
+
+  /* statement cell */
+  .cell-statement{
+    background:var(--black);color:var(--white);
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:clamp(1.6rem,3vw,3rem);
+    opacity:0;transform:translateY(30px);
+    transition:opacity .9s var(--ease),transform .9s var(--ease);
+  }
+  .cell-statement.in{opacity:1;transform:translateY(0);}
+  .cell-statement .tag{
+    font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.28em;
+    text-transform:uppercase;color:#9a9a94;
+  }
+  .cell-statement h2{
+    font-weight:900;font-stretch:125%;text-transform:uppercase;
+    font-size:clamp(1.7rem,3.4vw,3.1rem);line-height:1.05;letter-spacing:-.01em;
+    margin:2rem 0;max-width:18ch;
+  }
+  .cell-statement .foot{display:flex;justify-content:space-between;align-items:flex-end;gap:1.5rem;flex-wrap:wrap;}
+  .cell-statement .foot p{
+    font-family:'IBM Plex Mono',monospace;font-size:.68rem;letter-spacing:.16em;
+    text-transform:uppercase;line-height:2.1;color:#9a9a94;
+  }
+  .linkline{
+    font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.22em;
+    text-transform:uppercase;text-decoration:none;color:var(--white);
+    border-bottom:1px solid var(--white);padding-bottom:.35em;white-space:nowrap;
+    transition:opacity .3s;
+  }
+  .linkline:hover{opacity:.55;}
+
+  /* ============ LOAD MORE ============ */
+  .more-wrap{display:flex;justify-content:center;padding:3rem 1rem;border-bottom:1px solid var(--hair);}
+  .more-wrap.hide{display:none;}
+  .loadmore{
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.22em;
+    text-transform:uppercase;border:1px solid var(--black);
+    padding:1rem 2.6rem;
+    transition:background .35s var(--ease),color .35s var(--ease);
+  }
+  .loadmore:hover{background:var(--black);color:var(--white);}
+
+  /* ============ FOOTER ============ */
+  footer{
+    background:var(--black);color:var(--white);
+    padding:clamp(3rem,6vw,5rem) clamp(16px,3vw,40px) 1.6rem;
+  }
+  .foot-grid{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    gap:3rem;flex-wrap:wrap;padding-bottom:clamp(2.5rem,5vw,4rem);
+  }
+  .foot-brand{
+    font-weight:900;font-stretch:125%;text-transform:uppercase;
+    font-size:clamp(2.6rem,8.5vw,7.4rem);line-height:.88;letter-spacing:-.02em;
+  }
+  .foot-cols{display:flex;gap:4.5rem;flex-wrap:wrap;}
+  .foot-col h5{
+    font-family:'IBM Plex Mono',monospace;font-size:.65rem;letter-spacing:.26em;
+    text-transform:uppercase;color:#8b8b85;margin-bottom:1.2rem;
+  }
+  .foot-col a, .foot-col button{
+    display:block;font-family:'IBM Plex Mono',monospace;font-size:.78rem;
+    letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
+    margin-bottom:.85rem;opacity:.9;transition:opacity .3s;text-align:left;
+  }
+  .foot-col a:hover, .foot-col button:hover{opacity:.5;}
+  .foot-bottom{
+    border-top:1px solid rgba(253,253,251,.22);
+    padding-top:1.4rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+    font-family:'IBM Plex Mono',monospace;font-size:.64rem;letter-spacing:.2em;
+    text-transform:uppercase;color:#8b8b85;
+  }
+
+  /* load error note */
+  .loaderr{
+    display:none;padding:3rem clamp(16px,3vw,40px);
+    font-family:'IBM Plex Mono',monospace;font-size:.8rem;line-height:2;color:var(--grey);
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1100px){
+    .grid, .grid.cols5{grid-template-columns:repeat(2,1fr);}
+    .cell-statement{grid-column:1/-1 !important;}
+  }
+  @media (max-width:640px){
+    header{grid-template-columns:auto 1fr auto;gap:.6rem;}
+    .logo{font-size:.9rem;}
+    nav{gap:1.2rem;}
+    nav a{font-size:.6rem;letter-spacing:.12em;}
+    .cart{font-size:.6rem;padding:.5em .85em;}
+    .grid, .grid.cols5{grid-template-columns:1fr;}
+    .masthead-meta .spec{text-align:left;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+    .card,.ghead,.cell-statement{opacity:1;transform:none;}
+    .masthead h1 .line span{transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor" aria-hidden="true">VIEW</div>
+
+<header>
+  <a class="logo" href="#" id="logo">Kosar&nbsp;Khalil<sup>®</sup></a>
+  <nav>
+    <a href="#collections">Collections</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button class="cart" id="cartBtn">Cart&nbsp;(<span id="cartCount">0</span>)</button>
+</header>
+
+<div class="collbar" id="collections"></div>
+
+<section class="masthead">
+  <span class="eyebrow" id="eyebrow"></span>
+  <h1 id="mastTitle"></h1>
+  <div class="masthead-meta">
+    <p id="mastDesc"></p>
+    <div class="spec mono" id="mastSpec"></div>
+  </div>
+</section>
+
+<section class="grid" id="photos"></section>
+
+<div class="loaderr" id="loaderr">
+  Could not load site data. This site must run on a server (it works automatically once deployed to Netlify).<br>
+  نەتوانرا داتاکان بار بکرێن — ئەم سایتە دەبێت لەسەر سێرڤەر کار بکات (کاتێک لە Netlify بڵاوکرایەوە خۆکارانە کار دەکات).
+</div>
+
+<div class="more-wrap hide" id="moreWrap">
+  <button class="loadmore" id="loadMore">Load more</button>
+</div>
+
+<footer id="contact">
+  <div class="foot-grid">
+    <div class="foot-brand" id="footBrand">Kosar<br>Khalil</div>
+    <div class="foot-cols">
+      <div class="foot-col">
+        <h5>Index</h5>
+        <button id="footAll">All Photos</button>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h5>Contact</h5>
+        <a href="#" id="footEmail"></a>
+        <a href="#" id="footIg">Instagram</a>
+        <a href="#" id="footBe">Behance</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span id="footCopy"></span>
+    <span id="footLoc"></span>
+  </div>
+</footer>
+
+<script>
+const PAGE = 10; // 2 rows of 5 in the All Photos view
+let SETTINGS = null, COLS = {}, ORDER = [], DATA = [], ALLMETA = null;
+let state = { filter:null, visible:PAGE };
+
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+  });
+},{threshold:.1});
+
+const collbar = document.getElementById("collections");
+const gridEl = document.getElementById("photos");
+const moreWrap = document.getElementById("moreWrap");
+const loadMore = document.getElementById("loadMore");
+const mastTitle = document.getElementById("mastTitle");
+const mastDesc = document.getElementById("mastDesc");
+const mastSpec = document.getElementById("mastSpec");
+
+function esc(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+function setMasthead(meta){
+  mastTitle.innerHTML = meta.name.map(l=>`<span class="line"><span>${esc(l)}</span></span>`).join("");
+  mastDesc.textContent = meta.desc;
+  mastSpec.innerHTML = meta.spec;
+}
+
+function cardHTML(d){
+  const lbl = COLS[d.collection] ? COLS[d.collection].label : "";
+  return `<article class="card">
+    <div class="frame">
+      <img src="${esc(d.image)}" alt="${esc(d.title)}" loading="lazy">
+      <button class="addbar">Add to cart — $${esc(d.price)}</button>
+    </div>
+    <div class="caption">
+      <div>
+        <span class="idx">Nº ${d.seq}</span>
+        <h3>${esc(d.title)}</h3>
+        <div class="ed">${esc(lbl)}</div>
+      </div>
+      <span class="price">$${esc(d.price)}</span>
+    </div>
+  </article>`;
+}
+
+function statementHTML(span){
+  const s = SETTINGS;
+  return `<div class="cell-statement" style="grid-column:span ${span};">
+    <span class="tag">${esc(s.statementTag)}</span>
+    <h2>${esc(s.statementHeading)}</h2>
+    <div class="foot">
+      <p>${s.statementLines.map(esc).join("<br>")}</p>
+      <a class="linkline" href="mailto:${esc(s.email)}">${esc(s.inquireText)}</a>
+    </div>
+  </div>`;
+}
+
+function render(){
+  let html = "";
+
+  if(state.filter === "all"){
+    gridEl.classList.add("cols5");
+    let shown = 0;
+    for(const key of ORDER){
+      const items = DATA.filter(d=>d.collection===key);
+      let opened = false;
+      for(const d of items){
+        if(shown >= state.visible) break;
+        if(!opened){
+          html += `<button class="ghead" data-c="${esc(key)}">— ${esc(COLS[key].label)} · ${items.length} photos <span class="garrow">→</span></button>`;
+          opened = true;
+        }
+        html += cardHTML(d);
+        shown++;
+      }
+      if(shown >= state.visible) break;
+    }
+    gridEl.innerHTML = html;
+    const remaining = DATA.length - shown;
+    if(remaining > 0){
+      moreWrap.classList.remove("hide");
+      loadMore.textContent = `Load more (${remaining} remaining)`;
+    } else moreWrap.classList.add("hide");
+  } else {
+    gridEl.classList.remove("cols5");
+    const items = DATA.filter(d=>d.collection===state.filter);
+    html = items.map(cardHTML).join("");
+    const r = items.length % 4;
+    html += statementHTML(r === 0 ? 4 : 4 - r);
+    gridEl.innerHTML = html;
+    moreWrap.classList.add("hide");
+  }
+
+  gridEl.querySelectorAll(".card,.ghead,.cell-statement").forEach(el=>io.observe(el));
+  collbar.querySelectorAll(".citem").forEach(c=>c.classList.toggle("on", c.dataset.c===state.filter));
+}
+
+function setCollection(key){
+  state.filter = key;
+  state.visible = PAGE;
+  setMasthead(key === "all" ? ALLMETA : COLS[key]);
+  render();
+}
+
+function citemHTML(key, label, covers, n){
+  return `<button class="citem" data-c="${esc(key)}" aria-label="${esc(label)}">
+    <span class="thumb">${covers.map((src,i)=>`<img src="${esc(src)}" alt="" class="${i===0?"show":""}">`).join("")}</span>
+    <span class="clbl">${esc(label)}<em>${n}</em></span>
+  </button>`;
+}
+
+function buildBar(){
+  const allCovers = ORDER.map(k=>COLS[k].covers[0]).filter(Boolean);
+  collbar.innerHTML =
+    citemHTML("all", ALLMETA.label, allCovers, DATA.length) +
+    ORDER.map(k=>citemHTML(k, COLS[k].label, COLS[k].covers, COLS[k].covers.length)).join("");
+
+  collbar.querySelectorAll(".citem").forEach(item=>{
+    const imgs = item.querySelectorAll(".thumb img");
+    let idx = 0, timer = null;
+    const show = i => imgs.forEach((im,j)=>im.classList.toggle("show", j===i));
+    item.addEventListener("mouseenter", ()=>{
+      if(imgs.length < 2) return;
+      timer = setInterval(()=>{ idx = (idx+1) % imgs.length; show(idx); }, 850);
+    });
+    item.addEventListener("mouseleave", ()=>{
+      clearInterval(timer); timer = null; idx = 0; show(0);
+    });
+  });
+}
+
+async function boot(){
+  let site, settings;
+  try{
+    [site, settings] = await Promise.all([
+      fetch("data/site.json").then(r=>{ if(!r.ok) throw 0; return r.json(); }),
+      fetch("data/settings.json").then(r=>{ if(!r.ok) throw 0; return r.json(); })
+    ]);
+  }catch(e){
+    document.getElementById("loaderr").style.display = "block";
+    return;
+  }
+
+  SETTINGS = settings;
+
+  // header / footer texts
+  document.title = settings.siteName.toUpperCase() + " — Fine Art Photography";
+  document.getElementById("logo").innerHTML = esc(settings.siteName).replace(/ /g,"&nbsp;") + "<sup>®</sup>";
+  document.getElementById("eyebrow").textContent = settings.eyebrow;
+  const parts = settings.siteName.split(" ");
+  document.getElementById("footBrand").innerHTML = esc(parts[0]) + (parts[1] ? "<br>" + esc(parts.slice(1).join(" ")) : "");
+  const em = document.getElementById("footEmail");
+  em.textContent = settings.email; em.href = "mailto:" + settings.email;
+  document.getElementById("footIg").href = settings.instagram || "#";
+  document.getElementById("footBe").href = settings.behance || "#";
+  document.getElementById("footCopy").textContent = settings.copyright;
+  document.getElementById("footLoc").textContent = settings.location;
+
+  // collections + photos
+  ORDER = site.collections.map(c=>c.id);
+  site.collections.forEach(c=>{
+    COLS[c.id] = {
+      name: c.name2 && c.name2.trim() ? [c.name1, c.name2] : [c.name1],
+      label: c.label,
+      desc: c.desc,
+      spec: esc(c.spec1) + "<br>" + esc(c.spec2),
+      covers: []
+    };
+  });
+  DATA = site.photos.filter(p=>{
+    if(!COLS[p.collection]){ console.warn("Photo with unknown collection id skipped:", p.title, p.collection); return false; }
+    return true;
+  });
+  DATA.forEach((d,i)=>{ d.seq = String(i+1).padStart(2,"0"); COLS[d.collection].covers.push(d.image); });
+
+  ALLMETA = {
+    name:[settings.allTitle], label:settings.allTitle,
+    desc: settings.allDesc,
+    spec: `${DATA.length} photos · ${ORDER.length} collections<br>High resolution`
+  };
+
+  buildBar();
+  setCollection(ORDER[0]);
+}
+boot();
+
+// ---------- events ----------
+collbar.addEventListener("click", e=>{
+  const c = e.target.closest(".citem");
+  if(c) setCollection(c.dataset.c);
+});
+gridEl.addEventListener("click", e=>{
+  const g = e.target.closest(".ghead");
+  if(g){ setCollection(g.dataset.c); window.scrollTo({top:0, behavior:"smooth"}); }
+});
+loadMore.addEventListener("click", ()=>{ state.visible += PAGE; render(); });
+document.getElementById("footAll").addEventListener("click", ()=>{
+  setCollection("all");
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+
+// ---------- cursor ----------
+const cursor = document.getElementById("cursor");
+let cx=0,cy=0,tx=0,ty=0;
+const fine = window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+if(fine){
+  document.addEventListener("mousemove",e=>{tx=e.clientX;ty=e.clientY;});
+  (function loop(){
+    cx+=(tx-cx)*.18; cy+=(ty-cy)*.18;
+    cursor.style.left=cx+"px"; cursor.style.top=cy+"px";
+    requestAnimationFrame(loop);
+  })();
+  document.addEventListener("mouseover",e=>{
+    if(e.target.closest(".addbar")){ cursor.classList.remove("on"); return; }
+    if(e.target.closest(".frame")) cursor.classList.add("on");
+  });
+  document.addEventListener("mouseout",e=>{
+    if(e.target.closest(".frame")){
+      const to = e.relatedTarget;
+      if(!to || !to.closest(".frame")) cursor.classList.remove("on");
+    }
+  });
+}
+
+// ---------- cart ----------
+let count = 0;
+const cartBtn = document.getElementById("cartBtn");
+const cartCount = document.getElementById("cartCount");
+gridEl.addEventListener("click", e=>{
+  const btn = e.target.closest(".addbar");
+  if(!btn) return;
+  count++;
+  cartCount.textContent = count;
+  cartBtn.classList.remove("pulse");
+  void cartBtn.offsetWidth;
+  cartBtn.classList.add("pulse");
+  const original = btn.dataset.o || btn.textContent;
+  btn.dataset.o = original;
+  btn.textContent = "Added ✓";
+  setTimeout(()=>btn.textContent = original, 1200);
+});
+</script>
+
+</body>
+</html>

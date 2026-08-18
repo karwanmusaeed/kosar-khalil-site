@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control — Kosar Khalil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#fdfdfb; --black:#0b0b0b; --grey:#6f6f6a;
+    --hair:rgba(11,11,11,.9); --soft:rgba(11,11,11,.12);
+    --ok:#0a7d3b; --err:#b3261e;
+    --ease:cubic-bezier(.19,1,.22,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--white);color:var(--black);font-family:'Archivo',sans-serif;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;}
+  input,select,textarea{
+    font-family:'Archivo',sans-serif;font-size:.92rem;color:var(--black);
+    background:var(--white);border:1px solid var(--soft);padding:.55em .7em;width:100%;
+    border-radius:0;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--black);}
+  textarea{resize:vertical;min-height:70px;}
+  ::selection{background:var(--black);color:var(--white);}
+
+  /* header */
+  header{
+    position:sticky;top:0;z-index:50;background:var(--white);
+    border-bottom:1px solid var(--hair);
+    display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;
+    padding:.8rem clamp(16px,3vw,40px);
+  }
+  .brand{font-weight:900;font-stretch:125%;text-transform:uppercase;font-size:1.05rem;letter-spacing:.05em;}
+  .brand span{color:var(--grey);font-weight:500;font-size:.75em;letter-spacing:.2em;margin-left:.6em;}
+  .hspace{flex:1;}
+  .pill{
+    font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+    border:1px solid var(--soft);border-radius:999px;padding:.45em 1em;color:var(--grey);
+  }
+  .pill.dirty{border-color:var(--black);color:var(--black);}
+  .hbtn{
+    font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+    border:1px solid var(--black);padding:.6em 1.3em;
+    transition:background .3s var(--ease),color .3s var(--ease),opacity .3s;
+  }
+  .hbtn:hover{background:var(--black);color:var(--white);}
+  .hbtn.primary{background:var(--black);color:var(--white);}
+  .hbtn.primary:hover{opacity:.8;}
+  .hbtn:disabled{opacity:.35;pointer-events:none;}
+  .hbtn.ghost{border-color:var(--soft);color:var(--grey);}
+  .hbtn.ghost:hover{border-color:var(--black);color:var(--black);background:transparent;}
+
+  /* tabs */
+  .tabs{display:flex;gap:2rem;padding:0 clamp(16px,3vw,40px);border-bottom:1px solid var(--hair);}
+  .tab{
+    font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+    padding:1rem 0;border-bottom:2px solid transparent;color:var(--grey);
+  }
+  .tab.on{color:var(--black);border-bottom-color:var(--black);}
+  .tab:hover{color:var(--black);}
+
+  main{padding:2rem clamp(16px,3vw,40px) 6rem;max-width:1200px;}
+  .hint{font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--grey);line-height:1.9;}
+  h2.sec{font-weight:900;font-stretch:125%;text-transform:uppercase;font-size:1.3rem;margin:2.2rem 0 1rem;}
+  label.fl{display:block;font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);margin-bottom:.35rem;}
+
+  /* setup */
+  .setup{max-width:560px;margin:8vh auto;padding:0 20px;}
+  .setup h1{font-weight:900;font-stretch:125%;text-transform:uppercase;font-size:2rem;margin-bottom:.6rem;}
+  .setup p{color:var(--grey);font-size:.92rem;line-height:1.7;margin-bottom:1.6rem;}
+  .setup .fields > div{margin-bottom:1.1rem;}
+  .adv{margin-top:1.4rem;border-top:1px solid var(--soft);padding-top:1.2rem;}
+  .adv summary{font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--grey);cursor:pointer;margin-bottom:1rem;}
+
+  /* photo rows */
+  .addcard{border:1px solid var(--hair);padding:1.2rem;margin-bottom:2rem;}
+  .addgrid{display:grid;grid-template-columns:1.4fr 1fr .6fr 1fr auto;gap:.8rem;align-items:end;}
+  .prow{
+    display:grid;grid-template-columns:64px 1.4fr .6fr 1fr auto;gap:.8rem;align-items:center;
+    border:1px solid var(--soft);border-top:none;padding:.7rem .9rem;
+  }
+  .prow:first-of-type{border-top:1px solid var(--soft);}
+  .pthumb{width:64px;height:80px;object-fit:cover;background:#eee;display:block;}
+  .rowbtns{display:flex;gap:.35rem;align-items:center;}
+  .ib{
+    width:30px;height:30px;border:1px solid var(--soft);
+    font-size:.8rem;line-height:1;display:flex;align-items:center;justify-content:center;
+    transition:all .25s;color:var(--grey);
+  }
+  .ib:hover{border-color:var(--black);color:var(--black);}
+  .ib.del:hover{border-color:var(--err);color:var(--err);}
+  .badge{
+    font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;
+    border:1px solid var(--black);padding:.25em .6em;white-space:nowrap;
+  }
+  .gh{
+    font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--grey);margin:1.6rem 0 .7rem;
+  }
+
+  /* collections */
+  .crow{border:1px solid var(--soft);border-top:none;padding:1rem;}
+  .crow:first-of-type{border-top:1px solid var(--soft);}
+  .cgrid{display:grid;grid-template-columns:.7fr .9fr .9fr .9fr auto;gap:.8rem;align-items:end;margin-bottom:.8rem;}
+  .cgrid2{display:grid;grid-template-columns:2fr 1fr 1fr;gap:.8rem;align-items:end;}
+
+  /* settings */
+  .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;max-width:900px;}
+  .sgrid .full{grid-column:1/-1;}
+
+  /* log */
+  .logwrap{
+    position:fixed;bottom:0;left:0;right:0;z-index:60;
+    background:var(--black);color:var(--white);
+    font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.06em;
+    padding:.7rem clamp(16px,3vw,40px);
+    display:none;max-height:40vh;overflow:auto;
+  }
+  .logwrap.show{display:block;}
+  .logwrap .ok{color:#7fd7a2;}
+  .logwrap .err{color:#ff9b93;}
+  .logline{padding:.15rem 0;}
+
+  @media (max-width:900px){
+    .addgrid,.prow{grid-template-columns:1fr 1fr;}
+    .pthumb{width:56px;height:70px;}
+    .cgrid,.cgrid2{grid-template-columns:1fr 1fr;}
+    .sgrid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ SETUP ============ -->
+<div class="setup" id="setup" style="display:none;">
+  <h1>Control Panel</h1>
+  <p>Paste your GitHub access token to connect. The token is stored only in this browser — it is never sent anywhere except GitHub.</p>
+  <div class="fields">
+    <div>
+      <label class="fl">GitHub access token</label>
+      <input type="password" id="inToken" placeholder="ghp_...">
+    </div>
+    <details class="adv">
+      <summary>Advanced (repository settings)</summary>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;">
+        <div><label class="fl">Owner</label><input id="inOwner" value="karwanmusaeed"></div>
+        <div><label class="fl">Repo</label><input id="inRepo" value="kosar-khalil-site"></div>
+        <div><label class="fl">Branch</label><input id="inBranch" value="main"></div>
+      </div>
+    </details>
+  </div>
+  <button class="hbtn primary" id="btnConnect" style="margin-top:1.4rem;">Connect →</button>
+  <p class="hint" id="setupMsg" style="margin-top:1rem;"></p>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" style="display:none;">
+  <header>
+    <div class="brand">Kosar Khalil <span>Control</span></div>
+    <div class="hspace"></div>
+    <span class="pill mono" id="statusPill">All saved</span>
+    <a class="hbtn ghost" id="siteLink" href="#" target="_blank">View site ↗</a>
+    <button class="hbtn ghost" id="btnReload">Reload</button>
+    <button class="hbtn primary" id="btnPublish">Publish changes</button>
+    <button class="hbtn ghost" id="btnLogout">Disconnect</button>
+  </header>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="photos">Photos</button>
+    <button class="tab" data-tab="collections">Collections</button>
+    <button class="tab" data-tab="texts">Texts</button>
+  </div>
+
+  <main id="main"></main>
+</div>
+
+<div class="logwrap" id="logwrap"></div>
+
+<script>
+/* ================= storage (safe) ================= */
+const mem = {};
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return mem[k] ?? null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k]=v; } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){ delete mem[k]; } }
+};
+
+/* ================= config / state ================= */
+let TOKEN = store.get("kk_token") || "";
+let OWNER = store.get("kk_owner") || "karwanmusaeed";
+let REPO  = store.get("kk_repo")  || "kosar-khalil-site";
+let BRANCH= store.get("kk_branch")|| "main";
+
+const API = "https://api.github.com";
+const rawBase = () => `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}`;
+
+let site = null, settings = null;
+let shaSite = null, shaSettings = null;
+let dirty = false;
+let pendingDeletes = []; // image paths to delete from repo on publish
+let currentTab = "photos";
+let publishing = false;
+
+/* ================= helpers ================= */
+const $ = s => document.querySelector(s);
+function esc(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function b64ToUtf8(b64){
+  const bin = atob(b64.replace(/\s/g,""));
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function bytesToB64(bytes){
+  let bin=""; const CH=0x8000;
+  for(let i=0;i<bytes.length;i+=CH) bin += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i+CH,bytes.length)));
+  return btoa(bin);
+}
+function utf8ToB64(s){ return bytesToB64(new TextEncoder().encode(s)); }
+function slugify(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"") || "photo"; }
+
+function setDirty(d){
+  dirty = d;
+  const p = $("#statusPill");
+  p.textContent = d ? "Unsaved changes" : "All saved";
+  p.classList.toggle("dirty", d);
+}
+window.addEventListener("beforeunload", e=>{ if(dirty){ e.preventDefault(); e.returnValue=""; } });
+
+const logwrap = $("#logwrap");
+function log(msg, cls){
+  logwrap.classList.add("show");
+  const d = document.createElement("div");
+  d.className = "logline" + (cls ? " "+cls : "");
+  d.textContent = msg;
+  logwrap.appendChild(d);
+  logwrap.scrollTop = logwrap.scrollHeight;
+}
+function clearLog(){ logwrap.innerHTML=""; logwrap.classList.remove("show"); }
+
+/* ================= GitHub API ================= */
+async function gh(path, opts={}){
+  const res = await fetch(API+path, {
+    ...opts,
+    headers:{
+      "Authorization":"Bearer "+TOKEN,
+      "Accept":"application/vnd.github+json",
+      ...(opts.body ? {"Content-Type":"application/json"} : {}),
+      ...(opts.headers||{})
+    }
+  });
+  return res;
+}
+async function loadJsonFile(path){
+  const res = await gh(`/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}&t=${Date.now()}`);
+  if(!res.ok) throw new Error(`Could not load ${path} (${res.status})`);
+  const j = await res.json();
+  return { data: JSON.parse(b64ToUtf8(j.content)), sha: j.sha };
+}
+async function putFile(path, contentB64, sha, message){
+  const body = { message, content: contentB64, branch: BRANCH };
+  if(sha) body.sha = sha;
+  const res = await gh(`/repos/${OWNER}/${REPO}/contents/${path}`, { method:"PUT", body: JSON.stringify(body) });
+  if(!res.ok){
+    const t = await res.text();
+    throw new Error(`Save failed for ${path} (${res.status}): ${t.slice(0,140)}`);
+  }
+  const j = await res.json();
+  return j.content.sha;
+}
+async function deleteFile(path, message){
+  // fetch sha first
+  const res = await gh(`/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`);
+  if(res.status === 404) return; // already gone
+  if(!res.ok) throw new Error(`Could not check ${path} (${res.status})`);
+  const j = await res.json();
+  const res2 = await gh(`/repos/${OWNER}/${REPO}/contents/${path}`, {
+    method:"DELETE",
+    body: JSON.stringify({ message, sha: j.sha, branch: BRANCH })
+  });
+  if(!res2.ok) throw new Error(`Delete failed for ${path} (${res2.status})`);
+}
+
+/* ================= image processing ================= */
+async function processImage(file){
+  const bmp = await createImageBitmap(file);
+  const maxW = 1600;
+  const scale = Math.min(1, maxW / bmp.width);
+  const w = Math.round(bmp.width*scale), h = Math.round(bmp.height*scale);
+  const canvas = document.createElement("canvas");
+  canvas.width=w; canvas.height=h;
+  canvas.getContext("2d").drawImage(bmp,0,0,w,h);
+  const blob = await new Promise(r=>canvas.toBlob(r,"image/jpeg",0.82));
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  return { blob, b64: bytesToB64(bytes) };
+}
+
+/* ================= setup / connect ================= */
+function showSetup(msg){
+  $("#setup").style.display="block";
+  $("#app").style.display="none";
+  $("#inOwner").value = OWNER; $("#inRepo").value = REPO; $("#inBranch").value = BRANCH;
+  if(msg) $("#setupMsg").textContent = msg;
+}
+async function connect(){
+  TOKEN = $("#inToken").value.trim();
+  OWNER = $("#inOwner").value.trim();
+  REPO  = $("#inRepo").value.trim();
+  BRANCH= $("#inBranch").value.trim() || "main";
+  if(!TOKEN){ $("#setupMsg").textContent="Please paste a token."; return; }
+  $("#setupMsg").textContent = "Checking…";
+  const res = await gh(`/repos/${OWNER}/${REPO}`);
+  if(res.status===401){ $("#setupMsg").textContent="Token is invalid or expired."; return; }
+  if(res.status===404){ $("#setupMsg").textContent="Repository not found — check owner/repo, or the token has no access."; return; }
+  if(!res.ok){ $("#setupMsg").textContent="Error "+res.status; return; }
+  store.set("kk_token",TOKEN); store.set("kk_owner",OWNER); store.set("kk_repo",REPO); store.set("kk_branch",BRANCH);
+  boot();
+}
+$("#btnConnect").addEventListener("click", connect);
+$("#inToken").addEventListener("keydown", e=>{ if(e.key==="Enter") connect(); });
+
+$("#btnLogout").addEventListener("click", ()=>{
+  if(dirty && !confirm("You have unsaved changes. Disconnect anyway?")) return;
+  store.del("kk_token"); TOKEN="";
+  location.reload();
+});
+
+/* ================= load ================= */
+async function boot(){
+  $("#setup").style.display="none";
+  $("#app").style.display="block";
+  $("#siteLink").href = `https://${REPO.replace(/[^a-z0-9-]/g,"")}.netlify.app`;
+  try{
+    const [a,b] = await Promise.all([ loadJsonFile("data/site.json"), loadJsonFile("data/settings.json") ]);
+    site = a.data; shaSite = a.sha;
+    settings = b.data; shaSettings = b.sha;
+    // normalize
+    site.collections = site.collections || [];
+    site.photos = (site.photos || []).map(p=>({...p}));
+    pendingDeletes = [];
+    setDirty(false);
+    renderTab();
+  }catch(e){
+    showSetup("Connected, but failed to load data: " + e.message);
+  }
+}
+$("#btnReload").addEventListener("click", ()=>{
+  if(dirty && !confirm("Discard unsaved changes and reload from GitHub?")) return;
+  clearLog(); boot();
+});
+
+/* ================= tabs ================= */
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click", ()=>{
+  currentTab = t.dataset.tab;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on", x===t));
+  renderTab();
+}));
+function renderTab(){
+  if(currentTab==="photos") renderPhotos();
+  else if(currentTab==="collections") renderCollections();
+  else renderSettings();
+}
+
+/* ================= PHOTOS TAB ================= */
+function colOptions(sel){
+  return site.collections.map(c=>`<option value="${esc(c.id)}" ${c.id===sel?"selected":""}>${esc(c.label)}</option>`).join("");
+}
+function thumbSrc(p){
+  return p.pending ? p.blobUrl : rawBase() + p.image;
+}
+function renderPhotos(){
+  const main = $("#main");
+  let html = `
+  <div class="addcard">
+    <label class="fl" style="margin-bottom:.8rem;">Add a new photo</label>
+    <div class="addgrid">
+      <div><label class="fl">Image file</label><input type="file" id="npFile" accept="image/*"></div>
+      <div><label class="fl">Title</label><input id="npTitle" placeholder="e.g. Morning Light"></div>
+      <div><label class="fl">Price $</label><input id="npPrice" type="number" min="1" value="95"></div>
+      <div><label class="fl">Collection</label><select id="npCol">${colOptions()}</select></div>
+      <button class="hbtn" id="npAdd">+ Add</button>
+    </div>
+    <p class="hint" id="npMsg" style="margin-top:.7rem;"></p>
+  </div>`;
+
+  for(const c of site.collections){
+    const items = site.photos.map((p,i)=>({p,i})).filter(x=>x.p.collection===c.id);
+    html += `<div class="gh">— ${esc(c.label)} · ${items.length} photos</div>`;
+    if(!items.length) html += `<p class="hint">No photos in this collection yet.</p>`;
+    for(const {p,i} of items) html += photoRow(p,i);
+  }
+  const orphans = site.photos.map((p,i)=>({p,i})).filter(x=>!site.collections.some(c=>c.id===x.p.collection));
+  if(orphans.length){
+    html += `<div class="gh" style="color:var(--err);">— Unassigned (collection id not found)</div>`;
+    for(const {p,i} of orphans) html += photoRow(p,i);
+  }
+  main.innerHTML = html;
+
+  $("#npAdd").addEventListener("click", addPhoto);
+  main.querySelectorAll(".prow").forEach(row=>{
+    row.addEventListener("input", e=>{
+      const i = +row.dataset.i, k = e.target.dataset.k;
+      if(!k) return;
+      site.photos[i][k] = (k==="price") ? parseInt(e.target.value||0,10) : e.target.value;
+      setDirty(true);
+      if(k==="collection") renderPhotos();
+    });
+    row.querySelectorAll("[data-act]").forEach(b=>b.addEventListener("click", ()=>photoAction(b.dataset.act, +row.dataset.i)));
+  });
+}
+function photoRow(p,i){
+  return `<div class="prow" data-i="${i}">
+    <img class="pthumb" src="${esc(thumbSrc(p))}" alt="">
+    <div><label class="fl">Title</label><input data-k="title" value="${esc(p.title)}"></div>
+    <div><label class="fl">Price $</label><input data-k="price" type="number" min="1" value="${esc(p.price)}"></div>
+    <div><label class="fl">Collection</label><select data-k="collection">${colOptions(p.collection)}</select></div>
+    <div class="rowbtns">
+      ${p.pending?'<span class="badge">NEW</span>':""}
+      <button class="ib" data-act="up" title="Move up">↑</button>
+      <button class="ib" data-act="down" title="Move down">↓</button>
+      <button class="ib del" data-act="del" title="Delete">✕</button>
+    </div>
+  </div>`;
+}
+async function addPhoto(){
+  const f = $("#npFile").files[0];
+  const title = $("#npTitle").value.trim();
+  const price = parseInt($("#npPrice").value||0,10);
+  const col = $("#npCol").value;
+  const msg = $("#npMsg");
+  if(!f){ msg.textContent="Choose an image file."; return; }
+  if(!title){ msg.textContent="Write a title."; return; }
+  if(!price || price<1){ msg.textContent="Write a valid price."; return; }
+  if(!col){ msg.textContent="Create a collection first (Collections tab)."; return; }
+  msg.textContent="Processing image…";
+  try{
+    const {blob,b64} = await processImage(f);
+    const filename = `${col}-${slugify(title)}-${Date.now().toString(36)}.jpg`;
+    site.photos.push({
+      image: `/images/uploads/${filename}`,
+      title, price, collection: col,
+      pending:true, b64, blobUrl: URL.createObjectURL(blob)
+    });
+    setDirty(true);
+    renderPhotos();
+    $("#main").scrollIntoView({behavior:"smooth"});
+  }catch(e){ msg.textContent = "Image error: "+e.message; }
+}
+function photoAction(act,i){
+  const p = site.photos[i];
+  if(act==="del"){
+    if(!confirm(`Delete "${p.title}"? The image file will also be removed from the site on publish.`)) return;
+    if(!p.pending) pendingDeletes.push(p.image);
+    if(p.blobUrl) URL.revokeObjectURL(p.blobUrl);
+    site.photos.splice(i,1);
+    setDirty(true); renderPhotos(); return;
+  }
+  // reorder within the whole list, but keep it visually meaningful: swap with previous/next photo of the same collection
+  const dir = act==="up" ? -1 : 1;
+  const sameCol = site.photos.map((x,idx)=>({x,idx})).filter(o=>o.x.collection===p.collection);
+  const pos = sameCol.findIndex(o=>o.idx===i);
+  const target = sameCol[pos+dir];
+  if(!target) return;
+  [site.photos[i], site.photos[target.idx]] = [site.photos[target.idx], site.photos[i]];
+  setDirty(true); renderPhotos();
+}
+
+/* ================= COLLECTIONS TAB ================= */
+function renderCollections(){
+  const main = $("#main");
+  let html = `
+  <div class="addcard">
+    <label class="fl" style="margin-bottom:.8rem;">Add a new collection</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:.8rem;align-items:end;">
+      <div><label class="fl">ID (english, lowercase, no spaces)</label><input id="ncId" placeholder="portraits"></div>
+      <div><label class="fl">Label (shown on the site)</label><input id="ncLabel" placeholder="Portraits"></div>
+      <button class="hbtn" id="ncAdd">+ Add</button>
+    </div>
+    <p class="hint" id="ncMsg" style="margin-top:.7rem;"></p>
+  </div>`;
+
+  site.collections.forEach((c,i)=>{
+    const count = site.photos.filter(p=>p.collection===c.id).length;
+    html += `<div class="crow" data-i="${i}">
+      <div class="cgrid">
+        <div><label class="fl">ID</label><input data-k="id" value="${esc(c.id)}"></div>
+        <div><label class="fl">Label</label><input data-k="label" value="${esc(c.label)}"></div>
+        <div><label class="fl">Big title line 1</label><input data-k="name1" value="${esc(c.name1)}"></div>
+        <div><label class="fl">Big title line 2 (optional)</label><input data-k="name2" value="${esc(c.name2||"")}"></div>
+        <div class="rowbtns">
+          <span class="badge">${count} photos</span>
+          <button class="ib" data-act="up" title="Move up">↑</button>
+          <button class="ib" data-act="down" title="Move down">↓</button>
+          <button class="ib del" data-act="del" title="Delete">✕</button>
+        </div>
+      </div>
+      <div class="cgrid2">
+        <div><label class="fl">Description</label><textarea data-k="desc">${esc(c.desc)}</textarea></div>
+        <div><label class="fl">Right side line 1</label><input data-k="spec1" value="${esc(c.spec1)}"></div>
+        <div><label class="fl">Right side line 2</label><input data-k="spec2" value="${esc(c.spec2)}"></div>
+      </div>
+    </div>`;
+  });
+  main.innerHTML = html;
+
+  $("#ncAdd").addEventListener("click", ()=>{
+    const id = slugify($("#ncId").value.trim());
+    const label = $("#ncLabel").value.trim();
+    const msg = $("#ncMsg");
+    if(!id){ msg.textContent="Write an ID."; return; }
+    if(site.collections.some(c=>c.id===id)){ msg.textContent="That ID already exists."; return; }
+    if(!label){ msg.textContent="Write a label."; return; }
+    site.collections.push({ id, label, name1: label, name2:"", desc:"", spec1:"High resolution", spec2:"Kurdistan · 2026" });
+    setDirty(true); renderCollections();
+  });
+
+  main.querySelectorAll(".crow").forEach(row=>{
+    row.addEventListener("input", e=>{
+      const i = +row.dataset.i, k = e.target.dataset.k;
+      if(!k) return;
+      const oldId = site.collections[i].id;
+      let v = e.target.value;
+      if(k==="id"){
+        v = v.toLowerCase().replace(/[^a-z0-9-]/g,"");
+        e.target.value = v;
+        // keep photos linked when renaming an id
+        site.photos.forEach(p=>{ if(p.collection===oldId) p.collection = v; });
+      }
+      site.collections[i][k] = v;
+      setDirty(true);
+    });
+    row.querySelectorAll("[data-act]").forEach(b=>b.addEventListener("click", ()=>{
+      const i = +row.dataset.i, act = b.dataset.act;
+      if(act==="del"){
+        const c = site.collections[i];
+        const count = site.photos.filter(p=>p.collection===c.id).length;
+        if(count){ alert(`"${c.label}" still has ${count} photo(s). Move or delete them first (Photos tab).`); return; }
+        if(!confirm(`Delete collection "${c.label}"?`)) return;
+        site.collections.splice(i,1);
+      } else {
+        const j = i + (act==="up"?-1:1);
+        if(j<0 || j>=site.collections.length) return;
+        [site.collections[i], site.collections[j]] = [site.collections[j], site.collections[i]];
+      }
+      setDirty(true); renderCollections();
+    }));
+  });
+}
+
+/* ================= TEXTS TAB ================= */
+const SETTINGS_FIELDS = [
+  ["siteName","Site name"],
+  ["eyebrow","Small line above the big title"],
+  ["allTitle","All Photos — title"],
+  ["allDesc","All Photos — description","textarea"],
+  ["statementTag","Black box — small tag"],
+  ["statementHeading","Black box — heading"],
+  ["statementLines","Black box — lines (one per line)","lines"],
+  ["inquireText","Black box — link text"],
+  ["email","Email"],
+  ["instagram","Instagram URL"],
+  ["behance","Behance URL"],
+  ["location","Location (footer)"],
+  ["copyright","Copyright line"]
+];
+function renderSettings(){
+  const main = $("#main");
+  let html = `<div class="sgrid">`;
+  for(const [k,label,type] of SETTINGS_FIELDS){
+    const v = settings[k];
+    if(type==="lines"){
+      html += `<div class="full"><label class="fl">${esc(label)}</label><textarea data-k="${k}" data-t="lines">${esc((v||[]).join("\n"))}</textarea></div>`;
+    } else if(type==="textarea"){
+      html += `<div class="full"><label class="fl">${esc(label)}</label><textarea data-k="${k}">${esc(v)}</textarea></div>`;
+    } else {
+      html += `<div><label class="fl">${esc(label)}</label><input data-k="${k}" value="${esc(v)}"></div>`;
+    }
+  }
+  html += `</div>`;
+  main.innerHTML = html;
+  main.addEventListener("input", e=>{
+    const k = e.target.dataset.k;
+    if(!k) return;
+    settings[k] = e.target.dataset.t==="lines" ? e.target.value.split("\n").filter(x=>x.trim()!=="") : e.target.value;
+    setDirty(true);
+  });
+}
+
+/* ================= PUBLISH ================= */
+$("#btnPublish").addEventListener("click", publish);
+async function publish(){
+  if(publishing) return;
+  // validation
+  const problems = [];
+  site.photos.forEach(p=>{
+    if(!p.title.trim()) problems.push(`A photo has no title.`);
+    if(!p.price || p.price<1) problems.push(`"${p.title}" has no valid price.`);
+    if(!site.collections.some(c=>c.id===p.collection)) problems.push(`"${p.title}" points to a collection that doesn't exist.`);
+  });
+  const ids = site.collections.map(c=>c.id);
+  if(new Set(ids).size !== ids.length) problems.push("Two collections have the same ID.");
+  site.collections.forEach(c=>{ if(!c.id) problems.push("A collection has an empty ID."); });
+  if(problems.length){ alert("Fix these first:\n\n• " + problems.join("\n• ")); return; }
+
+  publishing = true;
+  $("#btnPublish").disabled = true;
+  clearLog();
+  log("Publishing…");
+  try{
+    // 1. upload new images
+    for(const p of site.photos.filter(x=>x.pending)){
+      log(`Uploading ${p.image} …`);
+      await putFile(p.image.replace(/^\//,""), p.b64, null, `Upload ${p.title} via control panel`);
+      log(`✓ ${p.title} uploaded`, "ok");
+    }
+    // 2. delete removed images (best effort)
+    for(const path of pendingDeletes){
+      try{
+        log(`Deleting ${path} …`);
+        await deleteFile(path.replace(/^\//,""), "Delete image via control panel");
+        log(`✓ deleted`, "ok");
+      }catch(e){ log("(skip) "+e.message, "err"); }
+    }
+    // 3. save site.json
+    const cleanPhotos = site.photos.map(p=>({ image:p.image, title:p.title, price:p.price, collection:p.collection }));
+    const cleanCols = site.collections.map(c=>({ id:c.id, name1:c.name1, name2:c.name2||"", label:c.label, desc:c.desc, spec1:c.spec1, spec2:c.spec2 }));
+    const siteJson = JSON.stringify({ collections: cleanCols, photos: cleanPhotos }, null, 2);
+    log("Saving data/site.json …");
+    shaSite = await putFile("data/site.json", utf8ToB64(siteJson), shaSite, "Update content via control panel");
+    log("✓ site.json saved", "ok");
+    // 4. save settings.json
+    const setJson = JSON.stringify(settings, null, 2);
+    log("Saving data/settings.json …");
+    shaSettings = await putFile("data/settings.json", utf8ToB64(setJson), shaSettings, "Update texts via control panel");
+    log("✓ settings.json saved", "ok");
+
+    // finalize local state
+    site.photos.forEach(p=>{ if(p.pending){ if(p.blobUrl) URL.revokeObjectURL(p.blobUrl); delete p.pending; delete p.b64; delete p.blobUrl; } });
+    pendingDeletes = [];
+    setDirty(false);
+    renderTab();
+    log("✓ Published. Netlify will update the live site in ~1 minute.", "ok");
+    setTimeout(clearLog, 8000);
+  }catch(e){
+    log("✗ " + e.message, "err");
+    if(String(e.message).includes("409") || String(e.message).includes("does not match")){
+      log("The file changed on GitHub since you loaded it. Click Reload, then redo your changes.", "err");
+    }
+  }finally{
+    publishing = false;
+    $("#btnPublish").disabled = false;
+  }
+}
+
+/* ================= init ================= */
+if(TOKEN) boot(); else showSetup();
+</script>
+
+</body>
+</html>
