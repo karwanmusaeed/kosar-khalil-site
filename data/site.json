@@ -220,6 +220,12 @@
       "title": "test 5",
       "price": 95,
       "collection": "test"
+    },
+    {
+      "image": "/images/uploads/citadel-review-msz1g88v.jpg",
+      "title": "review",
+      "price": 95,
+      "collection": "test"
     }
   ]
 }
