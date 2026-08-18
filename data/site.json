@@ -55,12 +55,12 @@
       "spec2": "Kurdistan · 2026"
     },
     {
-      "id": "test",
-      "name1": "test 3",
+      "id": "meso",
+      "name1": "kosar",
       "name2": "",
-      "label": "test 2",
-      "desc": "Required adapter convention",
-      "spec1": "3 photos · High resolution",
+      "label": "Mesopotamian",
+      "desc": "",
+      "spec1": "High resolution",
       "spec2": "Kurdistan · 2026"
     }
   ],
@@ -216,16 +216,10 @@
       "collection": "legends"
     },
     {
-      "image": "/images/uploads/test-test-5-msz1dlb8.jpg",
-      "title": "test 5",
-      "price": 95,
-      "collection": "test"
-    },
-    {
-      "image": "/images/uploads/citadel-review-msz1g88v.jpg",
-      "title": "review",
-      "price": 95,
-      "collection": "test"
+      "image": "/images/uploads/citadel-mesopotamian-msz1ll1r.jpg",
+      "title": "Mesopotamian",
+      "price": 50,
+      "collection": "citadel"
     }
   ]
 }
